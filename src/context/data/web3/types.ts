@@ -3,6 +3,7 @@ import type { Empty } from "@web3-react/empty"
 import type { GnosisSafe } from "@web3-react/gnosis-safe"
 import type { MetaMask } from "@web3-react/metamask"
 import type { Network } from "@web3-react/network"
+import { Connector } from "@web3-react/types"
 import type {
   AbstractConnectorArguments,
   ConnectorUpdate,
@@ -24,18 +25,32 @@ export declare abstract class AbstractConnector extends EventEmitter {
   protected emitDeactivate(): void
 }
 
+export type ConnectorDetails = ConnectorDetail[]
+
+export type ConnectorDetail = {
+  name: ConnectorName
+  icon: string
+  connector: ConnectorType
+}
+
+export type ConnectorDetailFunction<T extends ConnectorName> = {
+  name: T
+  icon: string
+  connector: Web3Connectors[T]
+}
+
 export type Web3Connectors = {
-  MetaMask: MetaMask
-  WalletConnect: WalletConnect
-  CoinbaseWallet: CoinbaseWallet
-  Network: Network
-  GnosisSafe: GnosisSafe
-  Empty: Empty
-  Url: Url
+  url: Url
+  empty: Empty
+  network: Network
+  metamask: MetaMask
+  walletconnect: WalletConnect
+  "gnosis-safe": GnosisSafe
+  "coinbase-wallet": CoinbaseWallet
 }
 
 export type ConnectorName = keyof Web3Connectors
 
 export type ConnectorArray = Partial<ConnectorName>[]
 
-export type ConnectorType = Web3Connectors[ConnectorName]
+export type ConnectorType = Web3Connectors[ConnectorName] | Connector

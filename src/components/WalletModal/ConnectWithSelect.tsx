@@ -6,7 +6,7 @@ import {
   getAddChainParameters,
   URLS,
 } from "../../context/data/web3/chains"
-import { ConnectorName, ConnectorType } from "../../context/data/web3/types"
+import { ConnectorDetail } from "../../context/data/web3/types"
 import {
   ChainIdType,
   IsActivatingType,
@@ -16,8 +16,7 @@ import useChainSwitch from "../../hooks/useChainSwitch"
 import ChainSelect from "./ChainSelect"
 
 interface ConnectWithSelectProps {
-  connector: ConnectorType
-  connectorName: ConnectorName
+  connector: ConnectorDetail
   chainId: ChainIdType
   isActivating: IsActivatingType
   isActive: IsActiveType
@@ -28,7 +27,6 @@ interface ConnectWithSelectProps {
 const ConnectWithSelect: React.FC<ConnectWithSelectProps> = ({
   connector,
   isActivating,
-  connectorName,
   isActive,
   error,
   setError,
@@ -38,7 +36,7 @@ const ConnectWithSelect: React.FC<ConnectWithSelectProps> = ({
   const chainIds = (isNetwork ? Object.keys(URLS) : Object.keys(CHAINS)).map(
     (chainId) => Number(chainId)
   )
-  const { desiredChainId, switchChain } = useChainSwitch(connectorName)
+  const { desiredChainId, switchChain } = useChainSwitch(connector.name)
 
   const connectHandler = useCallback(() => {
     if (connector instanceof WalletConnect || connector instanceof Network)
@@ -50,7 +48,8 @@ const ConnectWithSelect: React.FC<ConnectWithSelectProps> = ({
       console.log(connector)
       Promise.resolve(
         (async () => {
-          connector.activate(
+          connector.connector.activate(
+            // @ts-ignore
             desiredChainId === -1
               ? undefined
               : getAddChainParameters(desiredChainId)
@@ -64,10 +63,10 @@ const ConnectWithSelect: React.FC<ConnectWithSelectProps> = ({
 
   const disconnectHandler = () => {
     setError(undefined)
-    if (connector?.deactivate) {
-      void connector.deactivate()
+    if (connector.connector?.deactivate) {
+      void connector.connector.deactivate()
     } else {
-      void connector.resetState()
+      void connector.connector.resetState()
     }
   }
 

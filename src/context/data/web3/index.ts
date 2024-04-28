@@ -1,9 +1,9 @@
 export const AVAILABLE_CONNECTORS = [
-  "MetaMask",
-  "WalletConnect",
-  "CoinbaseWallet",
-  "GnosisSafe",
-  "Empty",
-  "Network",
-  "Url",
+  "metamask",
+  "walletconnect",
+  "coinbase-wallet",
+  "gnosis-safe",
+  "empty",
+  "network",
+  "url",
 ] as const

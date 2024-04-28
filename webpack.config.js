@@ -1,6 +1,7 @@
 const path = require("path")
 const version = require("./package.json").version
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const CopyWebpackPlugin = require("copy-webpack-plugin")
 const { DefinePlugin, ProvidePlugin } = require("webpack")
 
 const config = {
@@ -26,11 +27,15 @@ const config = {
       { test: /\.jsx?$/, exclude: /node_modules/, loader: "babel-loader" },
       { test: /\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
       { test: /\.css$/, use: ["style-loader", "css-loader"] },
-      { test: /\.(png|jpg|svg)$/, loader: "url-loader" },
+      { test: /\.(webp|png|jpg|svg)$/, loader: "url-loader" },
     ],
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "@import": path.resolve(__dirname, "./src/connector/import"),
+    },
     fallback: {
       buffer: require.resolve("buffer"),
     },
@@ -43,6 +48,9 @@ const config = {
     new ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
       process: "process/browser",
+    }),
+    new CopyWebpackPlugin({
+      patterns: [{ from: "./src/assets", to: "assets" }],
     }),
   ],
 }

@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material"
 import { IsActivatingType, IsActiveType } from "../../context/hooks/useWeb3"
 
 interface StatusProps {
@@ -8,7 +9,7 @@ interface StatusProps {
 
 const Status: React.FC<StatusProps> = ({ isActivating, isActive, error }) => {
   return (
-    <p>
+    <Typography variant="overline">
       {error ? (
         <span>
           🔴 {error.name ?? "Error"}
@@ -21,7 +22,7 @@ const Status: React.FC<StatusProps> = ({ isActivating, isActive, error }) => {
       ) : (
         "⚪️ Disconnected"
       )}
-    </p>
+    </Typography>
   )
 }
 

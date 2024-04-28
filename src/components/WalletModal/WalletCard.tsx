@@ -1,4 +1,8 @@
+import MoreVertIcon from "@mui/icons-material/MoreVert"
+import { Avatar, Box, CardHeader, Grid, IconButton } from "@mui/material"
+import { Stack } from "@mui/system"
 import { useEffect, useState } from "react"
+import { connectors } from "../../App"
 import { ConnectorName } from "../../context/data/web3/types"
 import {
   useAccounts,
@@ -6,43 +10,51 @@ import {
   useIsActivating,
   useIsActive,
 } from "../../context/hooks/useWeb3"
-import { getConnector } from "../../hooks/useConnector"
 import Accounts from "./Accounts"
 import Chain from "./Chain"
 import ConnectWithSelect from "./ConnectWithSelect"
 import Status from "./Status"
 
 interface WalletCardProps {
-  connectorName: ConnectorName
+  name: ConnectorName
+  icon: string
 }
 
-const WalletCard: React.FC<WalletCardProps> = ({ connectorName }) => {
-  const chainId = useChainId(connectorName)
-  const accounts = useAccounts(connectorName)
-  const isActivating = useIsActivating(connectorName)
+const WalletCard: React.FC<WalletCardProps> = ({ name, icon }) => {
+  const chainId = useChainId(name)
+  const accounts = useAccounts(name)
+  const isActivating = useIsActivating(name)
 
-  const isActive = useIsActive(connectorName)
+  const isActive = useIsActive(name)
 
-  const connector = getConnector(connectorName)
+  const connector = connectors.getConnector(name)
 
   useEffect(() => {
     Promise.resolve(
       (async () => {
-        if (connector.connectEagerly) await connector.connectEagerly()
-        else await connector.activate()
+        if (connector.connector.connectEagerly)
+          await connector.connector.connectEagerly()
+        else await connector.connector.activate()
       })()
-    ).catch(() =>
-      console.debug(`Failed to connect eagerly to ${connectorName}`)
-    )
+    ).catch(() => console.debug(`Failed to connect eagerly to ${name}`))
   }, [])
 
   const [error, setError] = useState<Error>()
 
   return (
-    <div className="flex flex-6 flex-col justify-between items-center p-2 m-2 border border-primary rounded">
-      connector:{connectorName}
-      <div>
-        <div>
+    <Grid item>
+      <CardHeader
+        avatar={<Avatar alt={name} src={`./icon/${name}`} />}
+        action={
+          <IconButton aria-label="settings">
+            <MoreVertIcon />
+          </IconButton>
+        }
+        title="Shrimp and Chorizo Paella"
+        subheader="September 14, 2016"
+      />
+      <Box p={2}>
+        <Stack>
           <Status
             isActivating={isActivating}
             isActive={isActive}
@@ -50,10 +62,9 @@ const WalletCard: React.FC<WalletCardProps> = ({ connectorName }) => {
           />
           <Chain chainId={chainId} />
           <Accounts accounts={accounts} />
-        </div>
+        </Stack>
         <div>
           <ConnectWithSelect
-            connectorName={connectorName}
             connector={connector}
             chainId={chainId}
             isActivating={isActivating}
@@ -62,8 +73,8 @@ const WalletCard: React.FC<WalletCardProps> = ({ connectorName }) => {
             setError={setError}
           />
         </div>
-      </div>
-    </div>
+      </Box>
+    </Grid>
   )
 }
 

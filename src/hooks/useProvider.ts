@@ -1,8 +1,9 @@
 import type { BaseProvider, Web3Provider } from "@ethersproject/providers"
 import { useEffect, useMemo, useState } from "react"
+import { connectors } from "../App"
 import { ConnectorName } from "../context/data/web3/types"
 import { useChainId, useIsActive } from "../context/hooks/useWeb3"
-import { getConnector, getPriorityConnector } from "./useConnector"
+import { getPriorityConnector } from "./useConnector"
 
 let DynamicProvider: typeof Web3Provider | null | undefined
 async function importProvider(): Promise<void> {
@@ -26,7 +27,7 @@ export function useProvider<T extends BaseProvider = Web3Provider>(
   const isActive = useIsActive(key)
   const chainId = useChainId(key)
 
-  const connector = getConnector(key)
+  const connector = connectors?.getConnector(key)
   // ensure that Provider is going to be available when loaded if @ethersproject/providers is installed
   const [loaded, setLoaded] = useState(DynamicProvider !== undefined)
   useEffect(() => {
@@ -45,10 +46,13 @@ export function useProvider<T extends BaseProvider = Web3Provider>(
     // to ensure connectors remain fresh, we condition re-renders on loaded, isActive and chainId
     void loaded && isActive && chainId
     if (enabled) {
-      if (connector.customProvider) return connector.customProvider as T
+      if (connector.connector.customProvider)
+        return connector.connector.customProvider as T
       // see tsdoc note above for return type explanation.
-      else if (DynamicProvider && connector.provider)
-        return new DynamicProvider(connector.provider as any) as unknown as T
+      else if (DynamicProvider && connector.connector.provider)
+        return new DynamicProvider(
+          connector.connector.provider as any
+        ) as unknown as T
     }
   }, [loaded, enabled, isActive, chainId])
 }

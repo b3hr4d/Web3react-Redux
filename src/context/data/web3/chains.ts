@@ -67,8 +67,9 @@ export function getAddChainParameters(
     return chainId
   }
 }
-const infuraKey = window.REQUEST?.infuraKey
-const quickNodeKey = window.REQUEST?.quickKey
+
+const infuraKey = process.env.INFURA_KEY
+const quickNodeKey = process.env.QUICKNODE_KEY
 
 export const CHAINS: {
   [chainId: number]: BasicChainInformation | ExtendedChainInformation

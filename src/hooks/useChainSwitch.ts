@@ -2,7 +2,7 @@ import { useCallback, useState } from "react"
 import { ConnectorName } from "../context/data/web3/types"
 import { useConnectorByName } from "./useConnector"
 
-const useChainSwitch = (key: ConnectorName = "MetaMask") => {
+const useChainSwitch = (key: ConnectorName = "metamask") => {
   const { chainId, connector } = useConnectorByName(key)
 
   const [error, setError] = useState<Error>()

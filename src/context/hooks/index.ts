@@ -1,5 +1,4 @@
 export * from "./useContract"
 export * from "./useLoading"
-export * from "./useRequest"
 export * from "./useSetting"
 export * from "./useWallet"
